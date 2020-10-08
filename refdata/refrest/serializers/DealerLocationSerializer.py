@@ -13,4 +13,5 @@ class DealerLocationSerializer(serializers.ModelSerializer):
                   'city',
                   'post_code',
                   'dealer',
+                  'purge',
                   ]
