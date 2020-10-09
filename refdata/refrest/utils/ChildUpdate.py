@@ -11,15 +11,17 @@ class ExternalAttributeTerm(object):
 get_types = {ChildType.DEALER_LOCATION: DealerLocation,
              }
 
-update_types = {ChildType.DEALER_LOCATION: lambda i, d: DealerLocation.objects.create(contract=i, **d),
+update_types = {ChildType.DEALER_LOCATION: lambda i, d: DealerLocation.objects.create(dealer=i, **d),
                 }
 
 
 def update_item(instance, data_list, item_type: ChildType):
     item_type_class = get_types.get(item_type)
     lambda_update_function = update_types.get(item_type)
+    print(data_list)
     for i in range(len(data_list)):
         data_item = data_list[i]
+        print(data_item)
         '''
         As it is not possible to say that the absence is an indication of deletion for child objects
         they are marked for purge. This is picked up and the object deleted from the database. If the 
@@ -29,7 +31,7 @@ def update_item(instance, data_list, item_type: ChildType):
         if data_item.get('purge') is True:
             try:
                 delete_item = item_type_class.objects.get(pk=data_item.get('itemIdentifier'))
-                delete_item.delete()
+            #               delete_item.delete()
             except ObjectDoesNotExist:
                 pass
         else:
@@ -40,9 +42,9 @@ def update_item(instance, data_list, item_type: ChildType):
             '''
             try:
                 item_instance = item_type_class.objects.get(pk=data_item.get('itemIdentifier'))
-                for field, value in data_item.items():
-                    setattr(item_instance, field, value)
-                item_instance.save()
+            #                for field, value in data_item.items():
+            #                   setattr(item_instance, field, value)
+            #                item_instance.save()
             except ObjectDoesNotExist:
-                item_instance = lambda_update_function(instance, data_item)
-                item_instance.save()
+               item_instance = lambda_update_function(instance, data_item)  #
+               item_instance.save()

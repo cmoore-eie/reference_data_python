@@ -6,3 +6,6 @@ from ..abstract.EffectiveExpirationDate import EffectiveExpirationDate
 
 class Dealer(BaseDelegate, EffectiveExpirationDate):
     objects = models.Manager()
+
+    class Meta:
+        select_on_save = True

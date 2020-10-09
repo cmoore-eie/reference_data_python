@@ -4,14 +4,14 @@ from ..models.model.DealerLocation import DealerLocation
 
 
 class DealerLocationSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = DealerLocation
-        fields = ['id',
-                  'location_name',
-                  'address_line1',
-                  'address_line2',
+        fields = ['locationName',
+                  'addressLine1',
+                  'addressLine2',
                   'city',
-                  'post_code',
-                  'dealer',
+                  'postCode',
                   'purge',
+                  'itemIdentifier',
                   ]
