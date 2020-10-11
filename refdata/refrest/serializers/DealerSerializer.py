@@ -1,4 +1,4 @@
-from django.core.exceptions import ObjectDoesNotExist
+
 from drf_writable_nested import WritableNestedModelSerializer
 
 from .DealerLocationSerializer import DealerLocationSerializer
@@ -12,13 +12,14 @@ class DealerSerializer(WritableNestedModelSerializer):
     locations = DealerLocationSerializer(many=True)
 
     def update(self, instance, validated_data):
-        print(validated_data)
         location_data = validated_data.pop("locations")
 
         for field, value in validated_data.items():
             setattr(instance, field, value)
-            print(location_data)
-            update_item(instance, location_data, ChildType.DEALER_LOCATION)
+
+        for location_item in location_data:
+            location_list = dict(location_item)
+            update_item(instance, [location_list], ChildType.DEALER_LOCATION)
 
         instance.save()
 
@@ -26,11 +27,12 @@ class DealerSerializer(WritableNestedModelSerializer):
 
     def create(self, validated_data):
         location_data = validated_data.pop("locations")
-        dealer_item = Dealer.objects.update_or_create(**validated_data)[0]
-        print(dealer_item)
+        dealer_item = Dealer.objects.create(**validated_data)
+
         for location_item in location_data:
-            print(location_item)
-            DealerLocation.objects.create(dealer=dealer_item, **location_item)
+            location_list = dict(location_item)
+            DealerLocation.objects.create(dealer=dealer_item, **location_list)
+
         return dealer_item
 
     class Meta:
